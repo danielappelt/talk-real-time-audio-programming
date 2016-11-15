@@ -4,7 +4,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-		<title>reveal.js</title>
+		<title>Real-time audio programming</title>
+
+        <meta name="description" content="Presentation for Open Source Audio Meeting / Rust User Group Cologne">
+        <meta name="author" content="Daniel Appelt">
 
 		<link rel="stylesheet" href="css/reveal.css">
 		<link rel="stylesheet" href="css/theme/black.css">
@@ -24,8 +27,109 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
-				<section>Slide 2</section>
+				<section>
+                    <h1>Real-time audio programming</h1>
+                    <h3>time waits for nothing</h3>
+                    <p>
+                        <small><a href="https://github.com/danielappelt">Daniel Appelt</a> / 2016-11-15</small>
+                    </p>
+                </section>
+				<section>
+                    <section>
+                        <h2>It all started...</h2>
+                        <p class="fragment">...while I was searching for a new MIDI sequencer</p>
+                    </section>
+                    <section>
+                        <p>Suddenly, I found myself debugging software and reviewing it's code. I was impressed by how complicated some implementations could get.</p>
+                    </section>
+                    <section>
+                        <h2>Preliminary conclusions</h2>
+                        <ul>
+                            <li class="fragment">I have to write my own Jack MIDI sequencer</li>
+                            <li class="fragment">A Jack MIDI application is just a regular Jack application</p>
+                    </section>
+                    <section>
+                        <h2>Which programming language?</h2>
+                        <ul>
+                            <li>Vala</li>
+                            <li>Ruby</li>
+                            <li>Rust</li>
+                            <li>Go</li>
+                            <li>D</li>
+                            <li>...</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <section>
+                        <h2><a href="http://www.rossbencina.com/code/real-time-audio-programming-101-time-waits-for-nothing">Real-time audio programming 101</a></h2>
+                        <h3>time waits for nothing</h3>
+                        <p>by Ross Bencina (author of <a href="http://www.audiomulch.com/">AudioMulch</a>)</p>
+                    </section>
+                    <section>
+                        <h2>Three guiding principles</h2>
+                        <ul>
+                            <li class="fragment grow">You don't want your audio to glitch</li>
+                            <li class="fragment grow">Real-time waits for nothing</li>
+                            <li class="fragment grow">Paranoia is justified</li>
+                        </h3>
+                    </section>
+                    <section>
+                        <h2>Things to avoid</h2>
+                        <ul>
+                            <li>Memory (de)allocation</li>
+                            <li>Locking a mutex (see <a href="https://en.wikipedia.org/wiki/Priority_inversion">priority inversion</a>)</li>
+                            <li>Performing (disk) I/O</li>
+                            <li>Calling OS functions that may block</li>
+                            <li>Calling code with unpredictable or poor worst-case time complexity</li>
+                            <li>Calling code that does or may do any of the above</li>
+                            <li>Calling code that you don't trust to be compliant</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Things to do</h2>
+                        <ul>
+                            <li>Use algorithms with good <a href"https://en.wikipedia.org/wiki/Worst-case_execution_time">worst-case time complexity</a></li>
+                            <li>Spread heavy computations across samples / callbacks</li>
+                            <li>Pre-allocate or pre-compute data in NRT thread</li>
+                            <li>Employ non-shared, audio-callback-only data structures</li>
+                        </ul>
+                    </section>
+                </section>
+                <section>
+                    <h2>Huh?</h2>
+                    <ul>
+                        <li class="fragment">Real-time audio programming is not easy</li>
+                        <li class="fragment">Best-practices for concurrent programming don't apply</li>
+                        <li class="fragment">Avoid GC and other unpredictable run-time libraries</li>
+                        <li class="fragment">Use lock-free FIFO queues to communicate with RT thread</li>
+                    </ul>
+                </section>
+                <section>
+                    <section>
+                        <h2>Supercollider as best-practice example</h2>
+                        <ul>
+                            <li>Client-server software for live coding and much more</li>
+                            <li>Ross Bencina provides valuable <a href="http://supercolliderbook.net/rossbencinach26.pdf">insights</a></li>
+                            <li>It's <a href="https://github.com/supercollider/supercollider/blob/master/common/MsgFifo.h">fifo queue</a> is a good starting point to dive into it's code</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Supercollider communication</h2>
+                        <img style="background:#fff;" src="../rossbencinach26.svg" />
+                    </section>
+                </section>
+                <section>
+                    <h2>Conclusions</h2>
+                    <ul>
+                        <li class="fragment">You better know what you do</li>
+                        <li class="fragment">Maybe it's better to just add a GUI to an existing engine</li>
+                        <li class="fragment">For the brave: Rust should be a nice alternative to C/C++</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>The end</h2>
+                </section>
 			</div>
 		</div>
 
